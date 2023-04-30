@@ -37,3 +37,6 @@ def pendaftaran(request):
         return render(request, template, {'form':form})
     form = FormPendaftaran
     return render(request, template, {'form':form})
+
+def login(request):
+    return render(request, '')

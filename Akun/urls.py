@@ -5,4 +5,5 @@ app_name='Akun'
 
 urlpatterns = [
     path('',views.pendaftaran ,name='index'),
+    path('login/',views.login ,name='login'),
 ]
