@@ -1,0 +1,78 @@
+package com.valen.mid;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DBHelper extends SQLiteOpenHelper {
+    public static final String DBNAME="project.db";
+
+    public DBHelper(Context context) { super(context, "project.db", null, 1); }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqlitedatabase) {
+        sqlitedatabase.execSQL("create table hotel(nama text, email text primary key, tanggal text, jeniskamar text)");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqlitedatabase, int i, int i1) {
+        sqlitedatabase.execSQL("drop table if exists hotel");
+    }
+
+    public Boolean checkemail(String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from hotel where email=?", new String[]{email});
+        if (cursor.getCount()>0) return true;
+        else return false;
+    }
+
+    public Boolean InsertData(String nama, String email, String tanggal, String jeniskamar){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("nama", nama);
+        values.put("email", email);
+        values.put("tanggal", tanggal);
+        values.put("jeniskamar", jeniskamar);
+
+        long result = db.insert("hotel", null, values);
+        if (result==-1) return false;
+        else return true;
+    }
+
+    public Cursor tampilData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from hotel", null);
+        return cursor;
+    }
+
+    public boolean hapusData(String email){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deletedRows = db.delete("hotel", "email=?", new String[]{email});
+        return deletedRows > 0;
+    }
+
+
+    public boolean editData(String nama, String email, String tanggal, String jeniskamar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nama", nama);
+        values.put("tanggal", tanggal);
+        values.put("jeniskamar", jeniskamar);
+        // TIDAK perlu update "nim"!
+
+        Cursor cursor = db.rawQuery("SELECT * FROM hotel WHERE email=?", new String[]{email});
+        if (cursor.getCount() > 0) {
+            long result = db.update("hotel", values, "email=?", new String[]{email});
+            if (result == -1)
+                return false;
+            else
+                return true;
+        } else {
+            return false;
+        }
+    }
+
+}
