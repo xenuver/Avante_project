@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         btnReservasi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String nama = namaEditText.getText().toString();
                 String email = emailEditText.getText().toString();
                 String tanggal = tanggalDate.getText().toString();
@@ -73,16 +72,21 @@ public class MainActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(nama) || TextUtils.isEmpty(email) || TextUtils.isEmpty(tanggal) || selectedId == -1) {
                     Toast.makeText(MainActivity.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                RadioButton selectedRadio = findViewById(selectedId);
-                String jeniskamar = selectedRadio.getText().toString();
-
-                if (!DB.checkemail(email)) {
-                    Boolean insert = DB.InsertData(nama, email, tanggal, jeniskamar);
-                    Toast.makeText(MainActivity.this, insert ? "Data Inserted" : "Data not Inserted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Data already exists!", Toast.LENGTH_SHORT).show();
+                    RadioButton selectedRadio = findViewById(selectedId);
+                    String jeniskamar = selectedRadio.getText().toString();
+
+                    Boolean checkemail = DB.checkemail(email);
+                    if (checkemail == false) {
+                        Boolean insert = DB.InsertData(nama, email, tanggal, jeniskamar);
+                        if (insert == true) {
+                            Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Data not Inserted", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "Data already exists!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -120,24 +124,36 @@ public class MainActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(nama) || TextUtils.isEmpty(email) || TextUtils.isEmpty(tanggal) || selectedId == -1) {
                     Toast.makeText(MainActivity.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                RadioButton selectedRadio = findViewById(selectedId);
-                String jeniskamar = selectedRadio.getText().toString();
+                } else {
+                    RadioButton selectedRadio = findViewById(selectedId);
+                    String jeniskamar = selectedRadio.getText().toString();
 
-                boolean updated = DB.editData(nama, email, tanggal, jeniskamar);
-                Toast.makeText(MainActivity.this, updated ? "Data Edited" : "Data gagal di edit (Email tidak ditemukan)", Toast.LENGTH_SHORT).show();
+                    boolean updated = DB.editData(nama, email, tanggal, jeniskamar);
+                    if (updated) {
+                        Toast.makeText(MainActivity.this, "Data Edited", Toast.LENGTH_SHORT).show();
+                        btnView.performClick(); // Optional: untuk menyamakan behavior seperti contoh
+                    } else {
+                        Toast.makeText(MainActivity.this, "Data gagal di edit (Email tidak ditemukan)", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
 
-        btnDelete.setOnClickListener(view -> {
-            String email = emailEditText.getText().toString();
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = emailEditText.getText().toString();
 
-            if (TextUtils.isEmpty(email)) {
-                Toast.makeText(MainActivity.this, "Please enter EMAIL", Toast.LENGTH_SHORT).show();
-            } else {
-                Boolean delete = DB.hapusData(email);
-                Toast.makeText(MainActivity.this, delete ? "Data Deleted" : "Data not Deleted", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(MainActivity.this, "Please enter EMAIL", Toast.LENGTH_SHORT).show();
+                } else {
+                    Boolean delete = DB.hapusData(email);
+                    if (delete) {
+                        Toast.makeText(MainActivity.this, "Data Deleted", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Data not Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
     }
