@@ -1,0 +1,91 @@
+package com.valen.uasandro;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DBHelper extends SQLiteOpenHelper {
+    public static final String DBNAME = "rumahsakit.db";
+    public static final String TABLENAME = "dokter";
+    public static final int VERSION = 2;
+
+    public static final String COL_NAMA = "nama";
+    public static final String COL_EMAIL = "email";
+    public static final String COL_TANGGAL = "tanggal_bergabung";
+    public static final String COL_SPESIALISASI = "spesialisasi";
+    public static final String COL_JADWAL = "jadwal_praktek";
+
+    public DBHelper(Context context) {
+        super(context, DBNAME, null, VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        String createTable = "CREATE TABLE " + TABLENAME + " (" +
+                COL_NAMA + " TEXT NOT NULL, " +
+                COL_EMAIL + " TEXT PRIMARY KEY, " +
+                COL_TANGGAL + " TEXT NOT NULL, " +
+                COL_SPESIALISASI + " TEXT NOT NULL, " +
+                COL_JADWAL + " TEXT NOT NULL)";
+        db.execSQL(createTable);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLENAME);
+        onCreate(db);
+    }
+
+    public Boolean checkemail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLENAME + " WHERE " + COL_EMAIL + "=?", new String[]{email});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+    public Boolean InsertData(String nama, String email, String tanggal, String spesialisasi, String jadwal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NAMA, nama);
+        values.put(COL_EMAIL, email);
+        values.put(COL_TANGGAL, tanggal);
+        values.put(COL_SPESIALISASI, spesialisasi);
+        values.put(COL_JADWAL, jadwal);
+
+        long result = db.insert(TABLENAME, null, values);
+        return result != -1;
+    }
+
+    public Boolean editData(String nama, String email, String tanggal, String spesialisasi, String jadwal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NAMA, nama);
+        values.put(COL_TANGGAL, tanggal);
+        values.put(COL_SPESIALISASI, spesialisasi);
+        values.put(COL_JADWAL, jadwal);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLENAME + " WHERE " + COL_EMAIL + "=?", new String[]{email});
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            long result = db.update(TABLENAME, values, COL_EMAIL + "=?", new String[]{email});
+            return result != -1;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
+
+    public Boolean hapusData(String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deleted = db.delete(TABLENAME, COL_EMAIL + "=?", new String[]{email});
+        return deleted > 0;
+    }
+
+    public Cursor tampilData() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLENAME + " ORDER BY " + COL_NAMA + " ASC", null);
+    }
+}
