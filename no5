@@ -1,0 +1,175 @@
+package com.valen.uasandro;
+
+import android.app.DatePickerDialog;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText namaEditText, emailEditText, tanggalDate;
+    Button btnDaftar, btnView, btnUpdate, btnDelete;
+    ImageView btnBack;
+    Spinner jadwalSpinner;
+    RadioGroup spesialisasiRadio;
+    DBHelper DB;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Inisialisasi komponen
+        namaEditText = findViewById(R.id.namaEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        tanggalDate = findViewById(R.id.tanggalDate);
+        btnDaftar = findViewById(R.id.btnDaftar);
+        btnView = findViewById(R.id.btnView);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnDelete = findViewById(R.id.btnDelete);
+        btnBack = findViewById(R.id.btnBack);
+        spesialisasiRadio = findViewById(R.id.spesialisasiRadio);
+        jadwalSpinner = findViewById(R.id.jadwalSpinner);
+        DB = new DBHelper(this);
+
+        // Spinner pilihan jadwal praktek
+        String[] jadwalOptions = {"Pagi", "Siang", "Sore", "Malam"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, jadwalOptions);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        jadwalSpinner.setAdapter(adapter);
+
+        // Tombol kembali
+        btnBack.setOnClickListener(view -> finish());
+
+        // Tanggal bergabung picker
+        tanggalDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int y = calendar.get(Calendar.YEAR);
+            int m = calendar.get(Calendar.MONTH);
+            int d = calendar.get(Calendar.DAY_OF_MONTH);
+            new DatePickerDialog(this, (view, year, month, day) ->
+                    tanggalDate.setText(day + "/" + (month + 1) + "/" + year), y, m, d).show();
+        });
+
+        // Tombol daftar
+        btnDaftar.setOnClickListener(v -> {
+            String nama = namaEditText.getText().toString().trim();
+            String email = emailEditText.getText().toString().trim();
+            String tanggal = tanggalDate.getText().toString().trim();
+            int selectedId = spesialisasiRadio.getCheckedRadioButtonId();
+            String jadwal = jadwalSpinner.getSelectedItem().toString();
+
+            if (TextUtils.isEmpty(nama) || TextUtils.isEmpty(email) || TextUtils.isEmpty(tanggal) || selectedId == -1) {
+                Toast.makeText(this, "Harap lengkapi semua field!", Toast.LENGTH_SHORT).show();
+            } else {
+                String spesialisasi = ((RadioButton) findViewById(selectedId)).getText().toString();
+                if (!DB.checkemail(email)) {
+                    boolean insert = DB.InsertData(nama, email, tanggal, spesialisasi, jadwal);
+                    if (insert) {
+                        Toast.makeText(this, "✅ Dokter berhasil didaftarkan!", Toast.LENGTH_SHORT).show();
+                        clearForm();
+                    } else {
+                        Toast.makeText(this, "❌ Gagal mendaftarkan dokter!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "⚠️ Email sudah terdaftar!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Tombol lihat
+        btnView.setOnClickListener(v -> {
+            Cursor res = DB.tampilData();
+            if (res.getCount() == 0) {
+                Toast.makeText(this, "📋 Tidak ada data dokter", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            StringBuilder buffer = new StringBuilder();
+            int counter = 1;
+            while (res.moveToNext()) {
+                buffer.append("👨‍⚕️ DOKTER #").append(counter++).append("\n");
+                buffer.append("Nama         : ").append(res.getString(0)).append("\n");
+                buffer.append("Email        : ").append(res.getString(1)).append("\n");
+                buffer.append("Tgl Bergabung: ").append(res.getString(2)).append("\n");
+                buffer.append("Spesialisasi : ").append(res.getString(3)).append("\n");
+                buffer.append("Jadwal       : ").append(res.getString(4)).append("\n\n");
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle("🏥 Data Dokter");
+            builder.setMessage(buffer.toString());
+            builder.setPositiveButton("OK", null);
+            builder.show();
+        });
+
+        // Tombol update
+        btnUpdate.setOnClickListener(v -> {
+            String nama = namaEditText.getText().toString().trim();
+            String email = emailEditText.getText().toString().trim();
+            String tanggal = tanggalDate.getText().toString().trim();
+            int selectedId = spesialisasiRadio.getCheckedRadioButtonId();
+            String jadwal = jadwalSpinner.getSelectedItem().toString();
+
+            if (TextUtils.isEmpty(nama) || TextUtils.isEmpty(email) || TextUtils.isEmpty(tanggal) || selectedId == -1) {
+                Toast.makeText(this, "Harap lengkapi semua field!", Toast.LENGTH_SHORT).show();
+            } else {
+                String spesialisasi = ((RadioButton) findViewById(selectedId)).getText().toString();
+                boolean updated = DB.editData(nama, email, tanggal, spesialisasi, jadwal);
+                if (updated) {
+                    Toast.makeText(this, "✅ Data berhasil diupdate!", Toast.LENGTH_SHORT).show();
+                    clearForm();
+                } else {
+                    Toast.makeText(this, "❌ Gagal update (Email tidak ditemukan)", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Tombol hapus
+        btnDelete.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) {
+                Toast.makeText(this, "Masukkan email untuk menghapus data!", Toast.LENGTH_SHORT).show();
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle("Hapus Data")
+                        .setMessage("Yakin ingin menghapus dokter dengan email: " + email + "?")
+                        .setPositiveButton("Ya", (dialog, which) -> {
+                            boolean deleted = DB.hapusData(email);
+                            if (deleted) {
+                                Toast.makeText(this, "✅ Data berhasil dihapus!", Toast.LENGTH_SHORT).show();
+                                clearForm();
+                            } else {
+                                Toast.makeText(this, "❌ Gagal menghapus data", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Batal", null)
+                        .show();
+            }
+        });
+    }
+
+    // Reset form
+    private void clearForm() {
+        namaEditText.setText("");
+        emailEditText.setText("");
+        tanggalDate.setText("");
+        spesialisasiRadio.clearCheck();
+        jadwalSpinner.setSelection(0);
+    }
+}
