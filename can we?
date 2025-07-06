@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:src="@android:drawable/ic_menu_revert"
+                android:contentDescription="Kembali"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp" />
+
+            <TextView
+                android:text="Pendaftaran Dokter"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Form Card -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="4dp">
+
+            <!-- Input Fields -->
+            <TextView
+                android:text="Informasi Dasar"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#34495E"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/namaEditText"
+                android:hint="Nama Lengkap"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#F8F9FA"
+                android:padding="16dp"
+                android:textColor="#2C3E50"
+                android:textColorHint="#7F8C8D"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/emailEditText"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#F8F9FA"
+                android:padding="16dp"
+                android:textColor="#2C3E50"
+                android:textColorHint="#7F8C8D"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/tanggalDate"
+                android:hint="Tanggal Bergabung"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#F8F9FA"
+                android:padding="16dp"
+                android:textColor="#2C3E50"
+                android:textColorHint="#7F8C8D"
+                android:textSize="14sp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Spesialisasi Section -->
+            <TextView
+                android:text="Spesialisasi"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#34495E"
+                android:layout_marginBottom="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/spesialisasiRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+
+                <RadioButton
+                    android:id="@+id/umum"
+                    android:text="Dokter Umum"
+                    android:textColor="#2C3E50"
+                    android:textSize="14sp"
+                    android:padding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/spesialis"
+                    android:text="Dokter Spesialis"
+                    android:textColor="#2C3E50"
+                    android:textSize="14sp"
+                    android:padding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/konsultan"
+                    android:text="Dokter Konsultan"
+                    android:textColor="#2C3E50"
+                    android:textSize="14sp"
+                    android:padding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RadioGroup>
+
+            <!-- Jadwal Section -->
+            <TextView
+                android:text="Jadwal Praktek"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#34495E"
+                android:layout_marginBottom="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/jadwalSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#F8F9FA"
+                android:padding="16dp"
+                android:layout_marginBottom="24dp" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:elevation="4dp">
+
+            <TextView
+                android:text="Aksi"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#34495E"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnDaftar"
+                android:text="DAFTAR"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#3498DB"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/btnView"
+                    android:text="LIHAT DATA"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="#2ECC71"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginEnd="6dp" />
+
+                <Button
+                    android:id="@+id/btnUpdate"
+                    android:text="UPDATE DATA"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="#F39C12"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginStart="6dp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:text="HAPUS DATA"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#E74C3C"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
